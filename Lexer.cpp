@@ -7,57 +7,77 @@
 
 Lexer::
 Lexer(string filename) {
-    cout << filename << endl;
     in.open(filename);
-    if (in.good()) {
-        lex();
-    }
-    else {
-        cout << "Error, unable to open file." << endl;
-        in.close();
-    }
-    
-}
-
-//-------------------------------------------------------------------------
-void Lexer::
-lex() {
-    string line;
-
-    for(int j = 0; ; j++) {
-        getline(in, line);
-        //if (line[j] == ' ')continue;  <-This line causes an error when you read in, commented out
-        if (in.eof() || !in.good()) break;
-
-        //for(int k = j + 1; ; ++k) {
-
-        //}
-
-        cout << line << "\n";
-    }
+    lex();
     in.close();
 }
 
 //-------------------------------------------------------------------------
 void Lexer::
-startLex() { 
-    
+lex() {
+    State st = START;
+    string line;
+
+    for(;;) {
+        getline(in, line);
+        if(in.eof() || !in.good()) break;
+
+        if(st == START) startLex(string& line, State& st);
+        else if(st == SYMBOL) acquireSymbol(string& line, State& st);
+        else if(st == STRING) acquireString(string& line, State& st);
+        else foundToken(string& line, State& st);
+    }
+ }
+
+//-------------------------------------------------------------------------
+void Lexer:: 
+startLex(string& line, State& st) {
+    int j, k;
+
+    for(j = 0; line[j] != ' '; ++j) {   // clear whitespace
+        if(line[j] == '\n') return;     // empty line, return to lex()
+    }
+
+    k = j + 1;
+
+    if(line[j] = ''\'' && line[k] = ' ') out << line.substr(j) << '\n';     // read line comment
+    else if(line[j] = '(' && line[k] = ' ') readBlkComment(line, j);    
+    else st = SYMBOL;
+        
+    cout << line << "\n";
+
 }
 
 //-------------------------------------------------------------------------
 void Lexer:: 
-acquireSymbol() {
+acquireSymbol(string& line, State& st) {
 
 }
 
 //-------------------------------------------------------------------------      
 void Lexer::
-acquireString() {
+acquireString(string& line, State& st) {
 
 }
 
 //-------------------------------------------------------------------------
 void Lexer::
-foundToken() {
+foundToken(string& line, State& st) {
 
+}
+
+//-------------------------------------------------------------------------
+void Lexer::
+readBlkComment(string& line, int& j) {
+    // out << line.substr(j) << '\n';  // read first part of comment in
+
+    // for(j = 0; ; ++j) {
+    //     getline(in, line);  // read new line in and check for error
+
+    //     if(line[j] == ')') {
+    //         out << line[j++];
+    //         break; 
+    //     }
+    //     out << line[j];
+    // }
 }
