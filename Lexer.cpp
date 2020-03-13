@@ -45,6 +45,7 @@ startLex(string& line, State& st) {
     else st = SYMBOL;
         
     cout << line << "\n";
+
 }
 
 //-------------------------------------------------------------------------
@@ -67,11 +68,16 @@ foundToken(string& line, State& st) {
 
 //-------------------------------------------------------------------------
 void Lexer::
-readBlkComment(string& line, int j) {
-    out << line.substr(j) << '\n';  // read first part of comment in
+readBlkComment(string& line, int& j) {
+    // out << line.substr(j) << '\n';  // read first part of comment in
 
-    for( ; line[j] == ')'; ++j) {
-        getline(in, line);  // read new line in and check for error
+    // for(j = 0; ; ++j) {
+    //     getline(in, line);  // read new line in and check for error
 
-    }
+    //     if(line[j] == ')') {
+    //         out << line[j++];
+    //         break; 
+    //     }
+    //     out << line[j];
+    // }
 }

@@ -44,7 +44,7 @@ class Lexer {
         void acquireString(string& line, State& st);
         void foundToken(string& line, State& st);
 
-        void readBlkComment(string& line, int begin);
+        void readBlkComment(string& line, int& j);
 
     public:
         Lexer(string filename);
