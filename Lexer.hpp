@@ -31,7 +31,7 @@ inline bool operator == (const Token& t1, const Token& t2) { return t1.equals(t2
 
 //-------------------------------------------------------------------------
 
-enum State { STARTSTATE , ACQUIRESYMBOL, ACQUIRESTRING, FOUNDTOKEN };
+enum State { START, SYMBOL, STRING, TOKEN };
 
 class Lexer {
     private:
@@ -39,10 +39,12 @@ class Lexer {
         ofstream out;
         //map<Token, int> symbolTable;
 
-        void startLex();
-        void acquireSymbol();
-        void acquireString();
-        void foundToken();
+        void startLex(string& line, State& st);
+        void acquireSymbol(string& line, State& st);
+        void acquireString(string& line, State& st);
+        void foundToken(string& line, State& st);
+
+        void readBlkComment(string& line, int begin);
 
     public:
         Lexer(string filename);
