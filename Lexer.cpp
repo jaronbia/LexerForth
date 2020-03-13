@@ -19,12 +19,9 @@ lex() {
     string line;
 
     for(;;) {
-        getline(in, line);
-        if(in.eof() || !in.good()) break;
-
         if(st == START) startLex(string& line, State& st);
-        else if(st == SYMBOL) acquireSymbol(string& line, State& st);
-        else if(st == STRING) acquireString(string& line, State& st);
+        else if(st == FOUNDSYMBOL) acquireSymbol(string& line, State& st);
+        else if(st == FOUNDSTRING) acquireString(string& line, State& st);
         else foundToken(string& line, State& st);
     }
  }
@@ -32,17 +29,29 @@ lex() {
 //-------------------------------------------------------------------------
 void Lexer:: 
 startLex(string& line, State& st) {
-    int j, k;
+    int j = 0, k;
 
-    for(j = 0; line[j] != ' '; ++j) {   // clear whitespace
-        if(line[j] == '\n') return;     // empty line, return to lex()
+    st = ACQUIRELINE;
+
+    while(st != FOUNDSYMBOL) {
+        if(st == ACQUIRELINE) {
+            getline(in, line);
+            if(in.eof() || !in.good()) break;
+        }
+
+        if(st == PROCESSBLOCK) {          // process block statement
+            readBlkComment(line, j); 
+            if(st != ENDBLOCK) continue;  // if end of block comment acquire state of nxt obj
+            else st = ACQUIRELINE;
+        }
+
+        for(j = 0; iswspace(line[j]); ++j, k = j + 1);    // clear whitespace
+        if(line[j] == '\n') continue;
+
+        if(line[j] = ''\'' && line[k] = ' ') out << line.substr(j) << '\n';   // read whole line comment
+        else if(line[j] = '(' && line[k] = ' ') st = PROCESSBLOCK;            // is a block statement
+        else st = FOUNDSYMBOL;  // found symbol, acquire it
     }
-
-    k = j + 1;
-
-    if(line[j] = ''\'' && line[k] = ' ') out << line.substr(j) << '\n';     // read line comment
-    else if(line[j] = '(' && line[k] = ' ') readBlkComment(line, j);    
-    else st = SYMBOL;
         
     cout << line << "\n";
 
@@ -69,15 +78,8 @@ foundToken(string& line, State& st) {
 //-------------------------------------------------------------------------
 void Lexer::
 readBlkComment(string& line, int& j) {
-    // out << line.substr(j) << '\n';  // read first part of comment in
-
-    // for(j = 0; ; ++j) {
-    //     getline(in, line);  // read new line in and check for error
-
-    //     if(line[j] == ')') {
-    //         out << line[j++];
-    //         break; 
-    //     }
-    //     out << line[j];
-    // }
+    while(st != ENDBLOCK && j < line.size()) {
+        if(line[j++] == ')') st = ENDBLOCK;
+        else out << line[j++];
+    }
 }

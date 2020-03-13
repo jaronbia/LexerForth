@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cctype>
 #include <map>
 
 using namespace std;
@@ -31,7 +32,7 @@ inline bool operator == (const Token& t1, const Token& t2) { return t1.equals(t2
 
 //-------------------------------------------------------------------------
 
-enum State { START, SYMBOL, STRING, TOKEN };
+enum State { START, ACQUIRELINE, PROCESSBLOCK, ENDBLOCK, FOUNDSYMBOL, FOUNDSTRING, FOUNDTOKEN };
 
 class Lexer {
     private:
