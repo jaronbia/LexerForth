@@ -36,7 +36,7 @@ void Lexer::startLex(string& line, State& st) {
         temp.clear();
     }
     if (!line.empty()) { //we skip any empty lines
-        for (j = 0; j < line.length(); j++) {   // clear whitespace
+        for (j = 0; j < int(line.length()); j++) {   // clear whitespace
             /* first we check if there are no spaces, and skipws is still false, and
             we have not found an '\' and no beginning '(' we used the ascii numbers
             for them. If the conditions are statisfied we then add a temporary string
