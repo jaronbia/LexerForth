@@ -32,7 +32,7 @@ inline bool operator == (const Token& t1, const Token& t2) { return t1.equals(t2
 
 //-------------------------------------------------------------------------
 
-enum State { START, ACQUIRELINE, PROCESSBLOCK, ENDBLOCK, FOUNDSYMBOL, FOUNDSTRING, FOUNDTOKEN };
+enum State { START, FOUNDSYMBOL, FOUNDSTRING, FOUNDTOKEN};
 
 class Lexer {
     private:

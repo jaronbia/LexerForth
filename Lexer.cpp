@@ -27,29 +27,28 @@ lex() {
  }
 
 //-------------------------------------------------------------------------
+
+enum LexPhase { ACQUIRELINE, PROCESSBLOCK, ENDBLOCK };
+
 void Lexer:: 
 startLex(string& line, State& st) {
     int j = 0, k;
-
-    st = ACQUIRELINE;
+    LexPhase phase;
 
     while(st != FOUNDSYMBOL) {
-        if(st == ACQUIRELINE) {
-            getline(in, line);
-            if(in.eof() || !in.good()) break;
-        }
-
-        if(st == PROCESSBLOCK) {          // process block statement
-            readBlkComment(line, j); 
-            if(st != ENDBLOCK) continue;  // if end of block comment acquire state of nxt obj
-            else st = ACQUIRELINE;
+        getline(in, line);
+        if(in.eof() || !in.good()) break;
+        
+        if(phase == PROCESSBLOCK) {   // Process block
+            readBlkComment(line, j, phase);
+            if(phase != ENDBLOCK) continue;
         }
 
         for(j = 0; iswspace(line[j]); ++j, k = j + 1);    // clear whitespace
-        if(line[j] == '\n') continue;
-
-        if(line[j] = ''\'' && line[k] = ' ') out << line.substr(j) << '\n';   // read whole line comment
-        else if(line[j] = '(' && line[k] = ' ') st = PROCESSBLOCK;            // is a block statement
+         
+        if(line[j] = '\n') out << line[j];
+        else if(line[j] = ''\'' && line[k] = ' ') out << line.substr(j);   // read whole line comment
+        else if(line[j] = '(' && line[k] = ' ') phase = PROCESSBLOCK;            // is a block statement
         else st = FOUNDSYMBOL;  // found symbol, acquire it
     }
         
@@ -77,9 +76,9 @@ foundToken(string& line, State& st) {
 
 //-------------------------------------------------------------------------
 void Lexer::
-readBlkComment(string& line, int& j) {
-    while(st != ENDBLOCK && j < line.size()) {
-        if(line[j++] == ')') st = ENDBLOCK;
-        else out << line[j++];
+readBlkComment(string& line, int& j, LexPhase& phase) {
+    while(phase == ENDBLOCK && j < line.size()) {
+        if(line[j] == ')') phase = ENDBLOCK;
+        out << line[j++];
     }
 }
