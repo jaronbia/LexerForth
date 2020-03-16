@@ -29,7 +29,7 @@ lex() {
 //-------------------------------------------------------------------------
 void Lexer:: 
 startLex(string& line, State& st) {
-    int j = 0, k;
+    int j = 0;
     LexPhase phase = ACQUIRESTATE;
 
     while(st != FOUNDSYMBOL) {
@@ -38,12 +38,12 @@ startLex(string& line, State& st) {
         
         if(phase == PROCESSBLOCK) {   // process block
             readBlkComment(line, j, phase);
-            if(phase != ACQUIRESTATE) continue;
+            if(phase != ACQUIRESTATE) continue; // read a new line in
         }
 
         for(j = 0; iswspace(line[j]); ++j); // clear whitespace
 
-        if(line[j] == '\n' || line.empty()) outlex << line[j]; 
+        if(line[j] == '\n' || line.empty()) outlex << line[j];   // endline or empty line encountered, add to output stream
         else if(line[j] == '\\' && iswspace(line[j + 1])) outlex << line.substr(j);   // read whole line comment, ignore it
         else if(line[j] == '(' && iswspace(line[j + 1])) phase = PROCESSBLOCK;      // is a block statement
         else st = FOUNDSYMBOL;  // found symbol, acquire it
@@ -55,6 +55,9 @@ startLex(string& line, State& st) {
 //-------------------------------------------------------------------------
 void Lexer:: 
 acquireSymbol(string& line, State& st) {
+    int j;
+
+    for(j = 0; iswspace(line[j]); ++j); // clear whitespace
     st = DONE;
 }
 
@@ -72,7 +75,7 @@ foundToken(string& line, State& st) {
 
 //-------------------------------------------------------------------------
 void Lexer::
-readBlkComment(string& line, int& j, LexPhase& phase) {
+readBlkComment(string& line, LexPhase& phase, int& j) {
     while(phase != ACQUIRESTATE && j < line.size()) {
         if(line[j] == ')') phase = ACQUIRESTATE; // end of block comment, acquire the state
         outlex << line[j++];

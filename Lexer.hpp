@@ -47,13 +47,13 @@ class Lexer {
         void foundToken(string& line, State& st);
 
         void readNewLine(string& line, State& st);
-        void readBlkComment(string& line, int& j, LexPhase& phase);
+        void readBlkComment(string& line, LexPhase& phase, int& j);
 
     public:
         Lexer(string filename);
         ~Lexer() = default;
-
         void lex();
+
         ostream& print(ostream& out) { return out; }
 };
 
