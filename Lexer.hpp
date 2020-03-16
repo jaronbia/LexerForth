@@ -32,12 +32,13 @@ inline bool operator == (const Token& t1, const Token& t2) { return t1.equals(t2
 
 //-------------------------------------------------------------------------
 
-enum State { START, FOUNDSYMBOL, FOUNDSTRING, FOUNDTOKEN};
+enum State { STARTLEX, FOUNDSYMBOL = 100, FOUNDSTRING, FOUNDTOKEN, DONE };
+enum LexPhase { ACQUIRESTATE, PROCESSBLOCK }; // either try to find a symbol or process block comment within startlex
 
 class Lexer {
     private:
         ifstream in;
-        ofstream out;
+        ofstream outlex;
         //map<Token, int> symbolTable;
 
         void startLex(string& line, State& st);
@@ -45,7 +46,7 @@ class Lexer {
         void acquireString(string& line, State& st);
         void foundToken(string& line, State& st);
 
-        void readBlkComment(string& line, int& j);
+        void readBlkComment(string& line, int& j, LexPhase& phase);
 
     public:
         Lexer(string filename);
