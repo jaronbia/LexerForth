@@ -27,4 +27,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="G:\OneDrive\University of New Haven\UNH CSCI6636 Structure of Programming Languages\lab 4\lexerInput.fs">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

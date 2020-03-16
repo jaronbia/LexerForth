@@ -1,9 +1,14 @@
+/***************************************
+ * Author: Jaron Bialecki & Evan Perry
+ * Date: March 2nd, 2020
+***************************************/
 
+#include <iostream>
 #include "Lexer.hpp"
 
-int main()
-{
-    cout << "Compiles successfully\n";
-    cout << "Test to make sure git works correctly!";
+int main(int argc, char** argv) {
+    string filename(argv[1]);
+    Lexer ForthLex(filename);
+
     return 0;
 }
