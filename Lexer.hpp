@@ -9,11 +9,11 @@
 #include <fstream>
 #include <string>
 #include <cctype>
-#include <map>
+#include <unordered_map>
 
 using namespace std;
 
-enum TokenT { WORD, STRING, START, COMMENT, COMMENTBLK };
+enum TokenT { DEFAULT, WORD, STRING, COMMENT, COMMENTBLK };
 
 class Token {
     private:
@@ -22,10 +22,16 @@ class Token {
         TokenT type;
 
     public:
-        Token(int occ = 0, string n = "", TokenT t = START) : occur(occ), name(n), type(t) {};
+        Token(int occ = 0, string n = "", TokenT t = DEFAULT) : occur(occ), name(n), type(t) {};
         ~Token() = default;    
 
         const bool equals(const Token& t) const { return name == t.name; }
+        operator size_t() const { 
+            size_t h1 = hash<int>()(occur);
+            size_t h2 = hash<string>()(name);
+            size_t h3 = hash<TokenT>()(type);
+            return h1 ^ h2 ^ h3;
+        }
 };
 
 inline bool operator == (const Token& t1, const Token& t2) { return t1.equals(t2); }
@@ -39,14 +45,14 @@ class Lexer {
     private:
         ifstream in;
         ofstream outlex;
-        //map<Token, int> symbolTable;
+        unordered_map<Token, int> symbolTable;
 
-        void startLex(string& line, State& st);
-        void acquireSymbol(string& line, State& st);
-        void acquireString(string& line, State& st);
-        void foundToken(string& line, State& st);
+        void startLex(string& line, State& st, int& j);
+        void acquireSymbol(string& line, State& st, int& j);
+        void acquireString(string& line, State& st, int& j);
+        void foundToken(string& line, State& st, int& j);
 
-        void readNewLine(string& line, State& st);
+        void readNewLine(string& line, State& st, int& j);
         void readBlkComment(string& line, LexPhase& phase, int& j);
 
     public:
