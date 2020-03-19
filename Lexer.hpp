@@ -13,6 +13,8 @@
 
 using namespace std;
 
+//-------------------------------------------------------------------------
+
 enum TokenT { DEFAULT, NUMBER, WORD, STRING, COMMENT, COMMENTBLK };
 
 class Token {
