@@ -13,28 +13,29 @@
 
 using namespace std;
 
-enum TokenT { DEFAULT, WORD, STRING, COMMENT, COMMENTBLK };
+enum TokenT { DEFAULT, NUMBER, WORD, STRING, COMMENT, COMMENTBLK };
 
 class Token {
     private:
-        int occur;      // Number of occurrences 
         string name;    // Name of token
         TokenT type;
 
     public:
-        Token(int occ = 0, string n = "", TokenT t = DEFAULT) : occur(occ), name(n), type(t) {};
+        Token(string n = "", TokenT t = DEFAULT) : name(n), type(t) {};
         ~Token() = default;    
 
         const bool equals(const Token& t) const { return name == t.name; }
-        operator size_t() const { 
-            size_t h1 = hash<int>()(occur);
-            size_t h2 = hash<string>()(name);
-            size_t h3 = hash<TokenT>()(type);
-            return h1 ^ h2 ^ h3;
-        }
+        const size_t hashtk() const { return ((hash<string>()(name) ^ hash<TokenT>()(type)) << 1) >> 1; }
 };
 
 inline bool operator == (const Token& t1, const Token& t2) { return t1.equals(t2); }
+
+//-------------------------------------------------------------------------
+struct TokenHasher {
+    std::size_t operator()(const Token& tk) const {
+        return tk.hashtk();
+    }
+};
 
 //-------------------------------------------------------------------------
 
@@ -45,7 +46,7 @@ class Lexer {
     private:
         ifstream in;
         ofstream outlex;
-        unordered_map<Token, int> symbolTable;
+        unordered_map<Token, int, TokenHasher> symbolTable;
 
         void startLex(string& line, State& st, int& j);
         void acquireSymbol(string& line, State& st, int& j);

@@ -71,28 +71,48 @@ acquireSymbol(string& line, State& st, int& j) {
 }
 
 //------------------------------------------------------------------------------------------ 
-/*
-• Skip leading whitespace by setting j to the first non-whitespace character. Then scan
-with k to first quote character. The chars from j to k-1 are a STRING; add your STRING
-token to the symbolTable. (Alternative: declare that the array, starting with position j,
-is a stringstream and use getline() with three parameters to stop the read operation at
-the first ’double-quote character.)
-• Set j to k+1 and change the state variable to start.
-• Note: this rule means that a string must start and end on the same line.
-*/   
 void Lexer::
 acquireString(string& line, State& st, int& j) {
     int k;
+    string name;
+    Token tk;
 
     for(j = 0; iswspace(line[j]); ++j); // clear whitespace
-    for(k = j + 1; line[k] != '\"'); ++k); // acquire string
+    for(k = j + 1; line[k] != '\"'; ++k); // acquire string
 
+    name = line.substr(j, k - 1);
+    tk = Token(name, STRING);
+
+    auto search = symbolTable.find(tk);
+    if(search != symbolTable.end()) symbolTable[tk] += 1; // increment if in table
+    else symbolTable.insert(make_pair(tk, 1)); 
+
+    st = STARTLEX;
 }
 
 //------------------------------------------------------------------------------------------
 void Lexer::
 foundToken(string& line, State& st, int& j) {
+    int k;
+    bool isNum = true;
+    string name;
+    TokenT tktype;
+    Token tk;
 
+    // get token
+    for(k = j + 1; !iswspace(line[k]); ++k) {
+        if(!(line[k] >= '0' || line[k] <= '9')) isNum = false;
+    }
+
+    name = line.substr(j, k - 1);
+    tktype = isNum ? NUMBER : WORD;
+    tk = Token(name, tktype);
+
+    auto search = symbolTable.find(tk);
+    if(search != symbolTable.end()) symbolTable[tk] += 1;
+    else symbolTable.insert(make_pair(tk, 1));
+
+    st = STARTLEX;
 }
 
 //-------------------------------------------------------------------------
