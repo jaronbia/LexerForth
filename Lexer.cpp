@@ -25,6 +25,9 @@ lex() {
         else if(st == FOUNDSTRING) acquireString(line, st, j);
         else if(st == FOUNDTOKEN) foundToken(line, st, j);
     }
+
+    for(auto const& pair : symbolTable) 
+        cout << '\n' << pair.first << " : " << pair.second << '\n';
  }
 
 //------------------------------------------------------------------------------------------
@@ -57,7 +60,7 @@ void Lexer::
 acquireSymbol(string& line, State& st, int& j) {
     int k;
 
-    while(st != FOUNDSTRING || st != FOUNDTOKEN) {
+    while(st != FOUNDSTRING && st != FOUNDTOKEN) {
         for(j = 0; iswspace(line[j]); ++j); // clear whitespace
 
         if(line[j] == '\n') {

@@ -26,9 +26,11 @@ class Token {
 
         const bool equals(const Token& t) const { return name == t.name; }
         const size_t hashtk() const { return ((hash<string>()(name) ^ hash<TokenT>()(type)) << 1) >> 1; }
+        ostream& print(ostream& out) const { out << name; return out; }
 };
 
 inline bool operator == (const Token& t1, const Token& t2) { return t1.equals(t2); }
+inline ostream& operator << (ostream& out, const Token t1) { return t1.print(out); }
 
 //-------------------------------------------------------------------------
 struct TokenHasher {
