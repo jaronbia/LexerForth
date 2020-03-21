@@ -121,7 +121,7 @@ foundToken(string& line, State& st, int& j) {
 //-------------------------------------------------------------------------
 void Lexer::
 readBlkComment(string& line, LexPhase& phase, int& j) {
-    while(phase != ACQUIRESTATE && j < line.size()) {
+    while(phase != ACQUIRESTATE && j < int(line.size())) {
         if(line[j] == ')') phase = ACQUIRESTATE; // end of block comment, acquire the state
         outlex << line[j++];
     }
