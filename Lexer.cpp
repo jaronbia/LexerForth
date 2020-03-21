@@ -7,6 +7,7 @@
 
 Lexer::
 Lexer(string filename) {
+    cout << filename << endl;
     in.open(filename);
     lex();
     in.close();
@@ -18,7 +19,6 @@ lex() {
     int j = 0;
     State st = STARTLEX;
     string line;
-
     while(st != DONE) {
         if(st == STARTLEX) startLex(line, st, j);
         else if(st == FOUNDSYMBOL) acquireSymbol(line, st, j);
@@ -43,7 +43,6 @@ startLex(string& line, State& st, int& j) {
             readBlkComment(line, phase, j);
             if(phase != ACQUIRESTATE) continue; // read a new line in
         }
-
         for( ; iswspace(line[j]); ++j); // clear whitespace
 
         if(line[j] == '\n') outlex << line[j];   // endline or empty line encountered, add to output stream
@@ -53,6 +52,7 @@ startLex(string& line, State& st, int& j) {
 
         cout << line << '\n';
     }
+    in.close();
 }
 
 //------------------------------------------------------------------------------------------
