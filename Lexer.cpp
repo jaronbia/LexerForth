@@ -28,6 +28,7 @@ lex() {
 
     for(auto const& pair : symbolTable) 
         cout << '\n' << pair.first << " : " << pair.second << '\n';
+    cout << symbolTable.size() << '\n';
  }
 
 //------------------------------------------------------------------------------------------
@@ -58,8 +59,6 @@ startLex(string& line, State& st, int& j) {
 //------------------------------------------------------------------------------------------
 void Lexer:: 
 acquireSymbol(string& line, State& st, int& j) {
-    int k;
-
     while(st != FOUNDSTRING && st != FOUNDTOKEN) {
         for(j = 0; iswspace(line[j]); ++j); // clear whitespace
 
@@ -68,7 +67,7 @@ acquireSymbol(string& line, State& st, int& j) {
             continue;
         }
         
-        if(line[j] == '.' && line[k] == '\"') st = FOUNDSTRING;
+        if(line[j] == '.' && line[j+1] == '\"') st = FOUNDSTRING;
         else st = FOUNDTOKEN;
     }
 }
