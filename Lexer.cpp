@@ -5,8 +5,7 @@
 
 #include "Lexer.hpp"
 
-Lexer::
-Lexer(string filename) {
+Lexer::Lexer(string filename) {
     cout << filename << endl;
     in.open(filename);
     lex();
@@ -14,8 +13,8 @@ Lexer(string filename) {
 }
 
 //------------------------------------------------------------------------------------------
-void Lexer::
-lex() {
+/*Lex function controls the loop finds starting of lex, symbol, string, and token*/
+void Lexer::lex() {
     int j = 0;
     State st = STARTLEX;
     string line;
@@ -27,12 +26,12 @@ lex() {
     }
 
     for(auto const& pair : symbolTable) 
-        cout << '\n' << pair.first << " : " << pair.second << '\n';
+       cout << '\n' << pair.first << " : " << pair.second << '\n';
  }
 
 //------------------------------------------------------------------------------------------
-void Lexer:: 
-startLex(string& line, State& st, int& j) {
+/*Starts the lex and aquires the state.*/
+void Lexer::startLex(string& line, State& st, int& j) {
     LexPhase phase = ACQUIRESTATE;
 
     while(st != FOUNDSYMBOL) {
@@ -56,9 +55,7 @@ startLex(string& line, State& st, int& j) {
 }
 
 //------------------------------------------------------------------------------------------
-void Lexer:: 
-acquireSymbol(string& line, State& st, int& j) {
-    int k;
+void Lexer::acquireSymbol(string& line, State& st, int& j) {
 
     while(st != FOUNDSTRING && st != FOUNDTOKEN) {
         for(j = 0; iswspace(line[j]); ++j); // clear whitespace
@@ -68,14 +65,13 @@ acquireSymbol(string& line, State& st, int& j) {
             continue;
         }
         
-        if(line[j] == '.' && line[k] == '\"') st = FOUNDSTRING;
+        if(line[j] == '.' && line[j+1] == '\"') st = FOUNDSTRING;
         else st = FOUNDTOKEN;
     }
 }
 
 //------------------------------------------------------------------------------------------ 
-void Lexer::
-acquireString(string& line, State& st, int& j) {
+void Lexer::acquireString(string& line, State& st, int& j) {
     int k;
     string name;
     Token tk;
@@ -94,8 +90,7 @@ acquireString(string& line, State& st, int& j) {
 }
 
 //------------------------------------------------------------------------------------------
-void Lexer::
-foundToken(string& line, State& st, int& j) {
+void Lexer::foundToken(string& line, State& st, int& j) {
     int k;
     bool isNum = true;
     string name;
@@ -119,8 +114,7 @@ foundToken(string& line, State& st, int& j) {
 }
 
 //-------------------------------------------------------------------------
-void Lexer::
-readBlkComment(string& line, LexPhase& phase, int& j) {
+void Lexer::readBlkComment(string& line, LexPhase& phase, int& j) {
     while(phase != ACQUIRESTATE && j < int(line.size())) {
         if(line[j] == ')') phase = ACQUIRESTATE; // end of block comment, acquire the state
         outlex << line[j++];
@@ -128,9 +122,13 @@ readBlkComment(string& line, LexPhase& phase, int& j) {
 }
 
 //-------------------------------------------------------------------------
-void Lexer::
-readNewLine(string& line, State& st, int& j) {
+void Lexer::readNewLine(string& line, State& st, int& j) {
     getline(in, line);
     if(in.eof() || !in.good()) st = DONE;
     j = 0;  // start position at 0
+}
+
+ostream& Lexer::print(ostream& out) {
+
+    return out;
 }

@@ -26,8 +26,8 @@ class Token {
         Token(string n = "", TokenT t = DEFAULT) : name(n), type(t) {};
         ~Token() = default;    
 
-        const bool equals(const Token& t) const { return name == t.name; }
-        const size_t hashtk() const { return ((hash<string>()(name) ^ hash<TokenT>()(type)) << 1) >> 1; }
+        bool equals(const Token& t) const { return name == t.name; }
+        size_t hashtk() const { return ((hash<string>()(name) ^ hash<TokenT>()(type)) << 1) >> 1; } //<- stack overflow
         ostream& print(ostream& out) const { out << name; return out; }
 };
 
@@ -64,8 +64,7 @@ class Lexer {
         Lexer(string filename);
         ~Lexer() = default;
         void lex();
-
-        ostream& print(ostream& out) { return out; }
+        ostream& print(ostream& out);
 };
 
 inline ostream& operator << (ostream& out, Lexer& lr) { return lr.print(out); }
