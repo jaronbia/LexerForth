@@ -10,5 +10,7 @@ int main(int argc, char** argv) {
     string filename(argv[1]);
     Lexer ForthLex(filename);
 
+    cout << ForthLex;
+
     return 0;
 }
