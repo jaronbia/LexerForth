@@ -50,7 +50,10 @@ startLex(string& line, int& j) {
         for( ; isspace(line[j]); ++j); // clear whitespace
 
         if(line[j] == '\n') outlex << line[j];   // endline or empty line encountered, add to output stream
-        else if(line.empty() || ( line[j] == '\\' && isspace(line[j + 1]) )) outlex << line.substr(j); // read whole line comment, ignore it
+        else if(line.empty() || ( line[j] == '\\' && isspace(line[j + 1]) )) {  // read whole line comment, ignore it
+             outlex << line.substr(j); 
+             j = line.size() - 1; 
+        }
         else if(line[j] == '(' && isspace(line[j + 1])) phase = PROCESSBLOCK;   // is a block statement
         else changeState(FOUNDSYMBOL);  // found symbol, acquire it
 
@@ -62,7 +65,6 @@ startLex(string& line, int& j) {
 //------------------------------------------------------------------------------------------
 void Lexer:: 
 acquireSymbol(string& line, int& j) {
-    cout << "AHHHH" << endl;
     while(currSt != FOUNDSTRING && currSt != FOUNDTOKEN) {
         for(j = 0; isspace(line[j]); ++j); // clear whitespace
 

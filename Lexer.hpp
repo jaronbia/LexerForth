@@ -67,11 +67,11 @@ class Lexer {
         void readBlkComment(string& line, LexPhase& phase, int& j);
 
         // Symbol table functions
+        void updateTable(Token tk);
         void addToken(string name, TokenT tktype) { 
-            updateTable(Token(name, tktype));
+            updateTable(Token(name, tktype)); 
             changeState(STARTLEX);
         }
-        void updateTable(Token tk);
 
     public:
         Lexer(string filename);
