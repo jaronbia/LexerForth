@@ -18,6 +18,7 @@ void Lexer::
 lex() {
     int j = 0;
     string line;
+    Token tk("CR", STRING);
 
     currSt = STARTLEX;
 
@@ -30,7 +31,7 @@ lex() {
 
     for(auto const& pair : symbolTable) 
        cout << '\n' << pair.first << " : " << pair.second << '\n';
-    cout << symbolTable.size() << '\n';
+    cout << "Table Size: " << symbolTable.size() << '\n';
  }
 
 //------------------------------------------------------------------------------------------
@@ -50,10 +51,7 @@ startLex(string& line, int& j) {
         for( ; isspace(line[j]); ++j); // clear whitespace
 
         if(line[j] == '\n') outlex << line[j];   // endline or empty line encountered, add to output stream
-        else if(line.empty() || ( line[j] == '\\' && isspace(line[j + 1]) )) {  // read whole line comment, ignore it
-             outlex << line.substr(j); 
-             j = line.size() - 1; 
-        }
+        else if(line.empty() || ( line[j] == '\\' && isspace(line[j + 1]) )) outlex << line.substr(j);    // read whole line comment, ignore it
         else if(line[j] == '(' && isspace(line[j + 1])) phase = PROCESSBLOCK;   // is a block statement
         else changeState(FOUNDSYMBOL);  // found symbol, acquire it
 
@@ -66,11 +64,11 @@ startLex(string& line, int& j) {
 void Lexer:: 
 acquireSymbol(string& line, int& j) {
     while(currSt != FOUNDSTRING && currSt != FOUNDTOKEN) {
-        for(j = 0; isspace(line[j]); ++j); // clear whitespace
+        for( ; isspace(line[j]); ++j); // clear whitespace, JUST REMOVED J=0 FROM THE BEGINNING
 
         if(line[j] == '\n') {
             readNewLine(line, j);
-            if(lexfinish()) break;   // lexing done
+            //if(lexfinish()) break;   // lexing done, NEEDS UPDATING WONT WORK AS IS
             continue;
         }
         
@@ -111,10 +109,10 @@ foundToken(string& line, int& j) {
         if(!(line[k] >= '0' || line[k] <= '9')) isNum = false;
     }
 
-    cout << "Name: " << name << endl; 
     cout << "\nFOUND TOKEN ACQUIRING......" << endl;
 
     name = line.substr(j, k);
+    cout << "Name: " << name << endl; 
     tktype = isNum ? NUMBER : WORD;
     addToken(name, tktype);
 
