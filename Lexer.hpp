@@ -43,22 +43,29 @@ struct TokenHasher {
 
 //-------------------------------------------------------------------------
 
-enum State { STARTLEX, FOUNDSYMBOL, FOUNDSTRING, FOUNDTOKEN, DONE };
-enum LexPhase { ACQUIRESTATE, PROCESSBLOCK }; // either try to find a symbol or process block comment within startlex
+enum State { STARTLEX = 100, FOUNDSYMBOL = 200, FOUNDSTRING = 300, FOUNDTOKEN = 400, DONE = 500 };
+enum LexPhase { ACQUIRESTATE, PROCESSBLOCK, PROCESSCMT }; // either try to find a symbol or process block comment within startlex
 
 class Lexer {
     private:
         ifstream in;
         ofstream outlex;
+        State currSt, prevSt;
         unordered_map<Token, int, TokenHasher> symbolTable;
 
-        void startLex(string& line, State& st, int& j);
-        void acquireSymbol(string& line, State& st, int& j);
-        void acquireString(string& line, State& st, int& j);
-        void foundToken(string& line, State& st, int& j);
+        void startLex(string& line, int& j);
+        void acquireSymbol(string& line, int& j);
+        void acquireString(string& line, int& j);
+        void foundToken(string& line, int& j);
 
-        void readNewLine(string& line, State& st, int& j);
+        void readNewLine(string& line, int& j);
         void readBlkComment(string& line, LexPhase& phase, int& j);
+
+        bool isString(string& line, int& j) { return line[j] == '.' && line[j+1] == '\"'; }
+
+        void updateTable(Token tk);
+        bool lexfinish() { return currSt == DONE; }
+        void changeState(State st) { prevSt = currSt; currSt = st; }
 
     public:
         Lexer(string filename);
