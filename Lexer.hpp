@@ -53,19 +53,25 @@ class Lexer {
         State currSt, prevSt;
         unordered_map<Token, int, TokenHasher> symbolTable;
 
+        // Lexing functions
         void startLex(string& line, int& j);
         void acquireSymbol(string& line, int& j);
         void acquireString(string& line, int& j);
         void foundToken(string& line, int& j);
+        bool isString(string& line, int& j) { return line[j] == '.' && line[j+1] == '\"'; }
+        void changeState(State st) { prevSt = currSt; currSt = st; }
+        bool lexfinish() { return currSt == DONE; }
 
+        // Reading functions
         void readNewLine(string& line, int& j);
         void readBlkComment(string& line, LexPhase& phase, int& j);
 
-        bool isString(string& line, int& j) { return line[j] == '.' && line[j+1] == '\"'; }
-
+        // Symbol table functions
+        void addToken(string name, TokenT tktype) { 
+            updateTable(Token(name, tktype));
+            changeState(STARTLEX);
+        }
         void updateTable(Token tk);
-        bool lexfinish() { return currSt == DONE; }
-        void changeState(State st) { prevSt = currSt; currSt = st; }
 
     public:
         Lexer(string filename);

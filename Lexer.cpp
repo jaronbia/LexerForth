@@ -82,17 +82,14 @@ void Lexer::
 acquireString(string& line, int& j) {
     int k;
     string name;
-    Token tk;
 
     for( ; isspace(line[j]); ++j); // clear whitespace
     for(k = j + 1; line[k] != '\"'; ++k); // acquire string
 
     name = line.substr(j, k - 1);
-    tk = Token(name, STRING);
+    addToken(name, STRING);
 
     j = k;
-    updateTable(tk);
-    changeState(STARTLEX);
 }
 
 //------------------------------------------------------------------------------------------
@@ -102,7 +99,6 @@ foundToken(string& line, int& j) {
     bool isNum = true;
     string name = "";
     TokenT tktype;
-    Token tk;
 
     cout << "FOUND TOKEN ACQUIRING......" << endl;
     cout << "Line: " << line << endl;
@@ -112,17 +108,15 @@ foundToken(string& line, int& j) {
     for(k = j + 1; !isspace(line[k]); ++k) {
         if(!(line[k] >= '0' || line[k] <= '9')) isNum = false;
     }
-    
+
+    cout << "Name: " << name << endl; 
     cout << "\nFOUND TOKEN ACQUIRING......" << endl;
 
     name = line.substr(j, k);
-    cout << "Name: " << name << endl;
     tktype = isNum ? NUMBER : WORD;
-    tk = Token(name, tktype);
+    addToken(name, tktype);
 
     j = k;
-    updateTable(tk);
-    changeState(STARTLEX);
 }
 
 //-------------------------------------------------------------------------
