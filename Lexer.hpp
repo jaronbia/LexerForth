@@ -43,8 +43,9 @@ struct TokenHasher {
 
 //-------------------------------------------------------------------------
 
-enum State { STARTLEX = 100, FOUNDSYMBOL = 200, FOUNDSTRING = 300, FOUNDTOKEN = 400, DONE = 500 };
-enum LexPhase { ACQUIRESTATE, PROCESSBLOCK, PROCESSCMT }; // either try to find a symbol or process block comment within startlex
+enum State { READ = 0, PROCESSBLK = 100, 
+            STARTLEX = 200, FOUNDSYMBOL = 300, 
+            FOUNDSTRING = 400, FOUNDTOKEN = 500, DONE = 600 };
 
 class Lexer {
     private:
@@ -59,12 +60,17 @@ class Lexer {
         void acquireString(string& line, int& j);
         void foundToken(string& line, int& j);
         bool isString(string& line, int& j) { return line[j] == '.' && line[j+1] == '\"'; }
-        void changeState(State st) { prevSt = currSt; currSt = st; }
-        bool lexfinish() { return currSt == DONE; }
+        void changeState(State st) { currSt = st; }
+
+        // start & finish of function
+        void start() { currSt = READ; }
+        bool finish() { return currSt == DONE; }
 
         // Reading functions
         void readNewLine(string& line, int& j);
-        void readBlkComment(string& line, LexPhase& phase, int& j);
+        void readSingleLine(string& line, int& j);
+        void readBlkComment(string& line, int& j);
+        bool isSingleComment(string& line, int& j) { return line[j] == '\\' && line[j + 1] == ' '; }
 
         // Symbol table functions
         void updateTable(Token tk);

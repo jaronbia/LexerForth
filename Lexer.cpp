@@ -18,12 +18,13 @@ void Lexer::
 lex() {
     int j = 0;
     string line;
-    Token tk("CR", STRING);
 
-    currSt = STARTLEX;
+    start();
 
-    while(!lexfinish()) {
-        if(currSt == STARTLEX) startLex(line, j);
+    while(!finish()) {
+        if(currSt == READ) readNewLine(line, j);
+        else if(currSt == PROCESSBLK) readBlkComment(line, j);
+        else if(currSt == STARTLEX) startLex(line, j);
         else if(currSt == FOUNDSYMBOL) acquireSymbol(line, j);
         else if(currSt == FOUNDSTRING) acquireString(line, j);
         else if(currSt == FOUNDTOKEN) foundToken(line, j);
@@ -37,44 +38,24 @@ lex() {
 //------------------------------------------------------------------------------------------
 void Lexer:: 
 startLex(string& line, int& j) {
-    LexPhase phase = ACQUIRESTATE;
+    for( ; line[j] == ' '; ++j); // clear whitespace
 
-    while(currSt != FOUNDSYMBOL) {
-        readNewLine(line, j);
-        if(lexfinish()) break;   // lexing done
-        
-        if(phase == PROCESSBLOCK) {   // process block
-            readBlkComment(line, phase, j);
-            if(phase != ACQUIRESTATE) continue; // read a new line in
-        }
+    if(line[j] == '(' && line[j + 1] == ' ') changeState(PROCESSBLK);   // is a block statement
+    else if(line.empty() || line[j] == '\n' || isSingleComment(line, j)) readSingleLine(line, j);  // read whole line comment, ignore it
+    else changeState(FOUNDSYMBOL);  // found symbol, acquire it
 
-        for( ; isspace(line[j]); ++j); // clear whitespace
-
-        if(line[j] == '\n') outlex << line[j];   // endline or empty line encountered, add to output stream
-        else if(line.empty() || ( line[j] == '\\' && isspace(line[j + 1]) )) outlex << line.substr(j);    // read whole line comment, ignore it
-        else if(line[j] == '(' && isspace(line[j + 1])) phase = PROCESSBLOCK;   // is a block statement
-        else changeState(FOUNDSYMBOL);  // found symbol, acquire it
-
-        cout << line << '\n';
-        cout << currSt << '\n';
-    }
+    cout << line << '\n';
+    cout << currSt << '\n';
 }
 
 //------------------------------------------------------------------------------------------
 void Lexer:: 
 acquireSymbol(string& line, int& j) {
-    while(currSt != FOUNDSTRING && currSt != FOUNDTOKEN) {
-        for( ; isspace(line[j]); ++j); // clear whitespace, JUST REMOVED J=0 FROM THE BEGINNING
+    for( ; line[j] == ' '; ++j); // clear whitespace, JUST REMOVED J=0 FROM THE BEGINNING
 
-        if(line[j] == '\n') {
-            readNewLine(line, j);
-            //if(lexfinish()) break;   // lexing done, NEEDS UPDATING WONT WORK AS IS
-            continue;
-        }
-        
-        if(isString(line, j)) changeState(FOUNDSTRING);
-        else changeState(FOUNDTOKEN);
-    }
+    if(line[j] == '\n') changeState(READ);
+    else if(isString(line, j)) changeState(FOUNDSTRING);
+    else changeState(FOUNDTOKEN);
 }
 
 //------------------------------------------------------------------------------------------ 
@@ -83,7 +64,7 @@ acquireString(string& line, int& j) {
     int k;
     string name;
 
-    for( ; isspace(line[j]); ++j); // clear whitespace
+    for( ; line[j] == ' '; ++j); // clear whitespace
     for(k = j + 1; line[k] != '\"'; ++k); // acquire string
 
     name = line.substr(j, k - 1);
@@ -100,19 +81,12 @@ foundToken(string& line, int& j) {
     string name = "";
     TokenT tktype;
 
-    cout << "FOUND TOKEN ACQUIRING......" << endl;
-    cout << "Line: " << line << endl;
-    cout << "Symbol: " << line[j];
-
     // get token
-    for(k = j + 1; !isspace(line[k]); ++k) {
+    for(k = j + 1; !isspace(line[k]); ++k) {    // as long as it is not ws, end of line is processed in startLex
         if(!(line[k] >= '0' || line[k] <= '9')) isNum = false;
     }
 
-    cout << "\nFOUND TOKEN ACQUIRING......" << endl;
-
     name = line.substr(j, k);
-    cout << "Name: " << name << endl; 
     tktype = isNum ? NUMBER : WORD;
     addToken(name, tktype);
 
@@ -121,19 +95,27 @@ foundToken(string& line, int& j) {
 
 //-------------------------------------------------------------------------
 void Lexer::
-readBlkComment(string& line, LexPhase& phase, int& j) {
-    while(phase != ACQUIRESTATE && j < line.size()) {
-        if(line[j] == ')') phase = ACQUIRESTATE; // end of block comment, acquire the state
-        outlex << line[j++];
-    }
-}
-
-//-------------------------------------------------------------------------
-void Lexer::
 readNewLine(string& line, int& j) {
     getline(in, line);
     if(in.eof() || !in.good()) changeState(DONE);
     j = 0;  // start position at 0
+}
+
+//-------------------------------------------------------------------------
+void Lexer::
+readSingleLine(string& line, int& j) {
+    if(line[j] == '\n') outlex << line[j];  // if endline read just that character
+    else outlex << line.substr(j);  // else output whole line
+    currSt = READ;                  // read new line
+}
+
+//-------------------------------------------------------------------------
+void Lexer::
+readBlkComment(string& line, int& j) {
+    while(currSt == PROCESSBLK && j < line.size()) {
+        if(line[j] == ')') changeState(STARTLEX); // end of block comment, acquire the state
+        outlex << line[j++];
+    }
 }
 
 //-------------------------------------------------------------------------
