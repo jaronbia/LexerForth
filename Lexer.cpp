@@ -38,6 +38,7 @@ lex() {
 //------------------------------------------------------------------------------------------
 void Lexer:: 
 startLex(string& line, int& j) {
+    cout << "START" << endl;
     for( ; line[j] == ' '; ++j); // clear whitespace
 
     if(line[j] == '(' && line[j + 1] == ' ') changeState(PROCESSBLK);   // is a block statement
@@ -51,6 +52,7 @@ startLex(string& line, int& j) {
 //------------------------------------------------------------------------------------------
 void Lexer:: 
 acquireSymbol(string& line, int& j) {
+    cout << "SYMBOL" << endl;
     for( ; line[j] == ' '; ++j); // clear whitespace, JUST REMOVED J=0 FROM THE BEGINNING
 
     if(line[j] == '\n') changeState(READ);
@@ -61,6 +63,7 @@ acquireSymbol(string& line, int& j) {
 //------------------------------------------------------------------------------------------ 
 void Lexer::
 acquireString(string& line, int& j) {
+    cout << "STRING" << endl;
     int k;
     string name;
 
@@ -76,6 +79,7 @@ acquireString(string& line, int& j) {
 //------------------------------------------------------------------------------------------
 void Lexer::
 foundToken(string& line, int& j) {
+    cout << "TOKEN" << endl;
     int k;
     bool isNum = true;
     string name = "";
@@ -98,6 +102,7 @@ void Lexer::
 readNewLine(string& line, int& j) {
     getline(in, line);
     if(in.eof() || !in.good()) changeState(DONE);
+    else if(currSt != PROCESSBLK) changeState(STARTLEX);
     j = 0;  // start position at 0
 }
 
