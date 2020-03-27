@@ -22,6 +22,7 @@ lex() {
     start();
 
     while(!finish()) {
+        cout << "j = " << j << endl;
         if(currSt == READ) readNewLine(line, j);
         else if(currSt == PROCESSBLK) readBlkComment(line, j);
         else if(currSt == STARTLEX) startLex(line, j);
@@ -80,14 +81,18 @@ acquireString(string& line, int& j) {
 void Lexer::
 foundToken(string& line, int& j) {
     cout << "TOKEN" << endl;
-    int k;
+    int k = 0;
     bool isNum = true;
     string name = "";
     TokenT tktype;
 
+    cout << "line size: " << line.size() << endl;
+    cout << "j = " << j << endl;
+
     // get token
     for(k = j + 1; !isspace(line[k]); ++k) {    // as long as it is not ws, end of line is processed in startLex
         if(!(line[k] >= '0' || line[k] <= '9')) isNum = false;
+        cout << "k = " << k << endl;
     }
 
     name = line.substr(j, k);
@@ -101,8 +106,11 @@ foundToken(string& line, int& j) {
 void Lexer::
 readNewLine(string& line, int& j) {
     getline(in, line);
+
     if(in.eof() || !in.good()) changeState(DONE);
     else if(currSt != PROCESSBLK) changeState(STARTLEX);
+    line += '\n';
+
     j = 0;  // start position at 0
 }
 
