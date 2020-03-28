@@ -5,8 +5,7 @@
 
 #include "Lexer.hpp"
 
-Lexer::
-Lexer(string filename) {
+Lexer::Lexer(string filename) {
     cout << filename << endl;
     in.open(filename);
     lex();
@@ -14,8 +13,8 @@ Lexer(string filename) {
 }
 
 //------------------------------------------------------------------------------------------
-void Lexer::
-lex() {
+/*Lex function controls the loop finds starting of lex, symbol, string, and token*/
+void Lexer::lex() {
     int j = 0;
     string line;
 
