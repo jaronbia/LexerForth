@@ -4,7 +4,8 @@
     dup CR ." Print the first " . ." Fibonacci numbers." CR ."    "
     dup 2 < if ." number must be 2 or greater."
     else
-        1 1 		( initialize for 1st 2 terms of series. )
+        1 1 		( initialize for 1st 
+		2 terms of series. )
         2dup . . 	( and print those two terms. )
         rot 		( bring loop limit to top of stack. )
         1 do 		( set up counted loop from one to n. )
