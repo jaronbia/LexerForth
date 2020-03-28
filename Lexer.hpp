@@ -10,25 +10,28 @@
 #include <string>
 #include <cctype>
 #include <unordered_map>
+#include <vector>
+#include <time.h>
+#define FN "output.txt"
 
 using namespace std;
 
 //-------------------------------------------------------------------------
 
-enum TokenT { DEFAULT = 0, NUMBER = 1, WORD = 2, STRING = 3, COMMENT, COMMENTBLK };
+enum TokenT { DEFAULT = 0, NUMBER = 1, WORD = 2, STRING = 3 /*COMMENT, COMMENTBLK*/ };
 
 class Token {
-    private:
-        string name;    // Name of token
-        TokenT type;
+private:
+    string name;    // Name of token
+    TokenT type;
 
-    public:
-        Token(string n = "", TokenT t = DEFAULT) : name(n), type(t) {};
-        ~Token() = default;    
+public:
+    Token(string n = "", TokenT t = DEFAULT) : name(n), type(t) {};
+    ~Token() = default;
 
-        const bool equals(const Token& t) const { return name == t.name; }
-        const size_t hashtk() const { return ((hash<string>()(name) ^ hash<TokenT>()(type)) << 1) >> 1; }
-        ostream& print(ostream& out) const { out << "Name: " << name << " Type: " << type; return out; }
+    const bool equals(const Token& t) const { return name == t.name; }
+    const size_t hashtk() const { return ((hash<string>()(name) ^ hash<TokenT>()(type)) << 1) >> 1; }
+    ostream& print(ostream& out) const;
 };
 
 inline bool operator == (const Token& t1, const Token& t2) { return t1.equals(t2); }
@@ -43,48 +46,52 @@ struct TokenHasher {
 
 //-------------------------------------------------------------------------
 
-enum State { READ = 0, PROCESSBLK = 100, 
-            STARTLEX = 200, FOUNDSYMBOL = 300, 
-            FOUNDSTRING = 400, FOUNDTOKEN = 500, DONE = 600 };
+enum State {
+    READ = 0, PROCESSBLK = 100,
+    STARTLEX = 200, FOUNDSYMBOL = 300,
+    FOUNDSTRING = 400, FOUNDTOKEN = 500, DONE = 600
+};
 
 class Lexer {
-    private:
-        ifstream in;
-        ofstream outlex;
-        State currSt, prevSt;
-        unordered_map<Token, int, TokenHasher> symbolTable;
+private:
+    ifstream in;
+    ofstream outlex;
+    State currSt, prevSt;
+    unordered_map<Token, int, TokenHasher> symbolTable;
+    vector <string> lineComments;
+    vector <char> blkComments;
 
-        // Lexing functions
-        void startLex(string& line, int& j);
-        void acquireSymbol(string& line, int& j);
-        void acquireString(string& line, int& j);
-        void foundToken(string& line, int& j);
-        bool isString(string& line, int& j) { return line[j] == '.' && line[j+1] == '\"'; }
-        void changeState(State st) { currSt = st; }
+    // Lexing functions
+    void startLex(string& line, int& j);
+    void acquireSymbol(string& line, int& j);
+    void acquireString(string& line, int& j);
+    void foundToken(string& line, int& j);
+    bool isString(string& line, int& j) { return line[j] == '.' && line[j + 1] == '\"'; }
+    void changeState(State st) { currSt = st; }
 
-        // start & finish of function
-        void start() { currSt = READ; }
-        bool finish() { return currSt == DONE; }
+    // start & finish of function
+    void start() { currSt = READ; }
+    bool finish() { return currSt == DONE; }
 
-        // Reading functions
-        void readNewLine(string& line, int& j);
-        void readSingleLine(string& line, int& j);
-        void readBlkComment(string& line, int& j);
-        bool isSingleComment(string& line, int& j) { return line[j] == '\\' && line[j + 1] == ' '; }
+    // Reading functions
+    void readNewLine(string& line, int& j);
+    void readSingleLine(string& line, int& j);
+    void readBlkComment(string& line, int& j);
+    bool isSingleComment(string& line, int& j) { return line[j] == '\\' && line[j + 1] == ' '; }
 
-        // Symbol table functions
-        void updateTable(Token tk);
-        void addToken(string name, TokenT tktype) { 
-            updateTable(Token(name, tktype)); 
-            changeState(STARTLEX);
-        }
+    // Symbol table functions
+    void updateTable(Token tk);
+    void addToken(string name, TokenT tktype) {
+        updateTable(Token(name, tktype));
+        changeState(STARTLEX);
+    }
 
-    public:
-        Lexer(string filename);
-        ~Lexer() = default;
-        void lex();
+public:
+    Lexer(string filename);
+    ~Lexer() = default;
+    void lex();
 
-        ostream& print(ostream& out) const;
+    ostream& print(ostream& out) const;
 };
 
 inline ostream& operator << (ostream& out, Lexer& lr) { return lr.print(out); }
