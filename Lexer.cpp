@@ -64,7 +64,7 @@ void Lexer::readBlkComment(string& line, int& j) {
 void Lexer::readSingleLine(string& line, int& j) {
     if (line[j] == '\n') outlex << line[j];  // if endline read just that character
     else lineComments.push_back(line.substr(j));  // else output whole line
-    currSt = READ;                  // read new line
+    changeState(READ);                // read new line
 }
 
 
