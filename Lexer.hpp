@@ -15,7 +15,7 @@ using namespace std;
 
 //-------------------------------------------------------------------------
 
-enum TokenT { DEFAULT, NUMBER, WORD, STRING, COMMENT, COMMENTBLK };
+enum TokenT { DEFAULT = 0, NUMBER = 1, WORD = 2, STRING = 3, COMMENT, COMMENTBLK };
 
 class Token {
     private:
@@ -28,7 +28,7 @@ class Token {
 
         const bool equals(const Token& t) const { return name == t.name; }
         const size_t hashtk() const { return ((hash<string>()(name) ^ hash<TokenT>()(type)) << 1) >> 1; }
-        ostream& print(ostream& out) const { out << name; return out; }
+        ostream& print(ostream& out) const { out << "Name: " << name << " Type: " << type; return out; }
 };
 
 inline bool operator == (const Token& t1, const Token& t2) { return t1.equals(t2); }
@@ -84,7 +84,7 @@ class Lexer {
         ~Lexer() = default;
         void lex();
 
-        ostream& print(ostream& out) { return out; }
+        ostream& print(ostream& out) const;
 };
 
 inline ostream& operator << (ostream& out, Lexer& lr) { return lr.print(out); }
