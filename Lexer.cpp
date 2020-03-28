@@ -94,14 +94,14 @@ acquireString(string& line, int& j) {
     cout << "LINEEND: " << line[j] << endl;
     cout << "clear ws j = " << j << endl;
 
-    name = line.substr(j, k + 1);
+    name = line.substr(j - 2, k - j);
     addToken(name, STRING);
 
     cout << "start end j = " << j << endl;
     cout << line << '\n';
     cout << currSt << '\n';
 
-    j = k;
+    j = k + 1;
     cout << "------------------------------------------" << endl;
 }
 
@@ -126,7 +126,8 @@ foundToken(string& line, int& j) {
         cout << "k = " << k << endl;
     }
 
-    name = line.substr(j, k);
+    name = line.substr(j, k - j);
+    cout << "name: " << name << endl;
     tktype = isNum ? NUMBER : WORD;
     addToken(name, tktype);
 
