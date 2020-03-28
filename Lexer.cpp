@@ -44,7 +44,7 @@ startLex(string& line, int& j) {
 //------------------------------------------------------------------------------------------
 void Lexer:: 
 acquireSymbol(string& line, int& j) {
-    for( ; line[j] != '\n' && isspace(line[j]); ++j); // clear whitespace, JUST REMOVED J=0 FROM THE BEGINNING
+    for( ; line[j] != '\n' && isspace(line[j]); ++j); // clear whitespace
 
     if(line[j] == '\n') changeState(READ);
     else if(isString(line, j)) changeState(FOUNDSTRING);
@@ -60,7 +60,7 @@ acquireString(string& line, int& j) {
     for( ; !isspace(line[j]); ++j);
     for(k = j + 1; line[k] != '\"'; ++k); // acquire string
 
-    name = line.substr(j - 2, k - j);
+    name = line.substr(j - 2, k - j + 3);
     addToken(name, STRING);
 
     j = k + 1;
@@ -112,6 +112,7 @@ readBlkComment(string& line, int& j) {
     while(currSt == PROCESSBLK && j < line.size()) {
         if(line[j] == ')') changeState(STARTLEX); // end of block comment, acquire the state
         outlex << line[j++];
+        if (line[j] != ')' && (j == line.size())) readNewLine(line, j);  // LOOK AT IT LATER
     }
 }
 
