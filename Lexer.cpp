@@ -39,26 +39,42 @@ lex() {
 //------------------------------------------------------------------------------------------
 void Lexer:: 
 startLex(string& line, int& j) {
+    cout << "------------------------------------------" << endl;
     cout << "START" << endl;
-    for( ; line[j] == ' '; ++j); // clear whitespace
+    cout << "start j = " << j << endl;
+    for( ; line[j] != '\n' && isspace(line[j]); ++j); // clear whitespace
+
+    cout << "LINESTART: " << line[j] << endl;
+    cout << "clear ws j = " << j << endl;
 
     if(line[j] == '(' && line[j + 1] == ' ') changeState(PROCESSBLK);   // is a block statement
     else if(line.empty() || line[j] == '\n' || isSingleComment(line, j)) readSingleLine(line, j);  // read whole line comment, ignore it
     else changeState(FOUNDSYMBOL);  // found symbol, acquire it
 
+    cout << "start end j = " << j << endl;
     cout << line << '\n';
     cout << currSt << '\n';
+    cout << "------------------------------------------" << endl;
 }
 
 //------------------------------------------------------------------------------------------
 void Lexer:: 
 acquireSymbol(string& line, int& j) {
+    cout << "------------------------------------------" << endl;
     cout << "SYMBOL" << endl;
-    for( ; line[j] == ' '; ++j); // clear whitespace, JUST REMOVED J=0 FROM THE BEGINNING
+    cout << "start j = " << j << endl;
+    for( ; line[j] != '\n' && isspace(line[j]); ++j); // clear whitespace, JUST REMOVED J=0 FROM THE BEGINNING
+
+    cout << "LINESTART: " << (int) line[j] << endl;
+    cout << "clear ws j = " << j << endl;
 
     if(line[j] == '\n') changeState(READ);
     else if(isString(line, j)) changeState(FOUNDSTRING);
     else changeState(FOUNDTOKEN);
+    cout << "start end j = " << j << endl;
+    cout << line << '\n';
+    cout << currSt << '\n';
+    cout << "------------------------------------------" << endl;
 }
 
 //------------------------------------------------------------------------------------------ 
@@ -68,10 +84,10 @@ acquireString(string& line, int& j) {
     int k;
     string name;
 
-    for( ; line[j] == ' '; ++j); // clear whitespace
+    for( ; line[j] != '\n' && isspace(line[j]); ++j); // clear whitespace
     for(k = j + 1; line[k] != '\"'; ++k); // acquire string
 
-    name = line.substr(j, k - 1);
+    name = line.substr(j, k + 1);
     addToken(name, STRING);
 
     j = k;
@@ -80,13 +96,16 @@ acquireString(string& line, int& j) {
 //------------------------------------------------------------------------------------------
 void Lexer::
 foundToken(string& line, int& j) {
+    cout << "------------------------------------------" << endl;
     cout << "TOKEN" << endl;
     int k = 0;
     bool isNum = true;
     string name = "";
     TokenT tktype;
 
+    cout << "line: " << line << endl;
     cout << "line size: " << line.size() << endl;
+    cout << "line subscript: " << line[j] << endl;
     cout << "j = " << j << endl;
 
     // get token
@@ -100,6 +119,7 @@ foundToken(string& line, int& j) {
     addToken(name, tktype);
 
     j = k;
+    cout << "------------------------------------------" << endl;
 }
 
 //-------------------------------------------------------------------------
