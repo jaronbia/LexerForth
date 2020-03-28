@@ -47,7 +47,7 @@ startLex(string& line, int& j) {
     cout << "LINESTART: " << line[j] << endl;
     cout << "clear ws j = " << j << endl;
 
-    if(line[j] == '(' && line[j + 1] == ' ') changeState(PROCESSBLK);   // is a block statement
+    if(line[j] == '(' && isspace(line[j + 1])) changeState(PROCESSBLK);   // is a block statement
     else if(line.empty() || line[j] == '\n' || isSingleComment(line, j)) readSingleLine(line, j);  // read whole line comment, ignore it
     else changeState(FOUNDSYMBOL);  // found symbol, acquire it
 
@@ -65,7 +65,7 @@ acquireSymbol(string& line, int& j) {
     cout << "start j = " << j << endl;
     for( ; line[j] != '\n' && isspace(line[j]); ++j); // clear whitespace, JUST REMOVED J=0 FROM THE BEGINNING
 
-    cout << "LINESTART: " << (int) line[j] << endl;
+    cout << "LINESTART: " << line[j] << endl;
     cout << "clear ws j = " << j << endl;
 
     if(line[j] == '\n') changeState(READ);
@@ -80,17 +80,29 @@ acquireSymbol(string& line, int& j) {
 //------------------------------------------------------------------------------------------ 
 void Lexer::
 acquireString(string& line, int& j) {
+    cout << "------------------------------------------" << endl;
     cout << "STRING" << endl;
+    cout << "start j = " << j << endl;
+    cout << "LINESTART: " << line[j] << endl;
     int k;
     string name;
 
-    for( ; line[j] != '\n' && isspace(line[j]); ++j); // clear whitespace
+    for( ; !isspace(line[j]); ++j);
+    //for( ; line[j] != '\n' && isspace(line[j]); ++j); // clear whitespace
     for(k = j + 1; line[k] != '\"'; ++k); // acquire string
+
+    cout << "LINEEND: " << line[j] << endl;
+    cout << "clear ws j = " << j << endl;
 
     name = line.substr(j, k + 1);
     addToken(name, STRING);
 
+    cout << "start end j = " << j << endl;
+    cout << line << '\n';
+    cout << currSt << '\n';
+
     j = k;
+    cout << "------------------------------------------" << endl;
 }
 
 //------------------------------------------------------------------------------------------
@@ -145,10 +157,15 @@ readSingleLine(string& line, int& j) {
 //-------------------------------------------------------------------------
 void Lexer::
 readBlkComment(string& line, int& j) {
+    cout << "------------------------------------------" << endl;
+    cout << "BLOCK COMMENT" << endl;
     while(currSt == PROCESSBLK && j < line.size()) {
         if(line[j] == ')') changeState(STARTLEX); // end of block comment, acquire the state
+        cout << line[j];
         outlex << line[j++];
     }
+    cout << endl;
+    cout << "------------------------------------------" << endl;
 }
 
 //-------------------------------------------------------------------------
