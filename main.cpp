@@ -3,7 +3,6 @@
  * Date: March 2nd, 2020
 ***************************************/
 
-#include <iostream>
 #include "Lexer.hpp"
 
 string header();
