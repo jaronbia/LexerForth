@@ -18,7 +18,7 @@ using namespace std;
 
 //-------------------------------------------------------------------------
 
-enum TokenT { DEFAULT = 0, NUMBER = 1, WORD = 2, STRING = 3 /*COMMENT, COMMENTBLK*/ };
+enum TokenT { DEFAULT = 0, NUMBER = 1, WORD = 2, STRING = 3 };
 
 class Token {
 private:
