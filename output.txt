@@ -108,3 +108,113 @@ then					WORD				1
 =================================End of Token Map================================
 
 Table Size: 25
+==================================================================================
+Jaron Bialecki & Evan Perry
+CSCI 6636
+Lexer Unit Test
+Sun Mar 29 17:38:40 2020
+==================================================================================
+===============================Single Line Comments: =============================
+\ Print the first n Fibonacci numbers
+\ End of Test File for Lexer
+End of Line Comments: 
+===================================================================================
+==============================Beginning of Block Comments==========================
+( n >>> )
+( initialize for 1st 
+		2 terms of series. )
+( and print those two terms. )
+( bring loop limit to top of stack. )
+( set up counted loop from one to n. )
+( make a copy of newest term for later use. )
+( bring 2nd newest term to top of stack. )
+( new term is sum of 2 previous terms.  Print it. )
+( return to top of loop. )
+=================================End of Block Comments=============================
+===================================================================================
+==================================Beginning of Token Map===========================
+Token Name				Type			   Occurrences
+
+:					WORD				1
+ Fibonacci numbers.			String				1
+if					WORD				1
+2					NUMBER				2
+dup					WORD				4
+2dup					WORD				1
+fib					WORD				6
+CR					WORD				3
+.					WORD				4
+."					WORD				4
+ Print the first 			String				1
+    					String				1
+<					WORD				1
+ number must be 2 or greater.		String				1
+else					WORD				1
+100					NUMBER				1
+1					NUMBER				4
+rot					WORD				2
+do					WORD				1
++					WORD				1
+loop					WORD				1
+then					WORD				1
+;					WORD				1
+5					NUMBER				1
+10					NUMBER				1
+=================================End of Token Map================================
+
+Table Size: 25
+==================================================================================
+Jaron Bialecki & Evan Perry
+CSCI 6636
+Lexer Unit Test
+Sun Mar 29 17:42:57 2020
+==================================================================================
+===============================Single Line Comments: =============================
+\ Print the first n Fibonacci numbers
+\ End of Test File for Lexer
+End of Line Comments: 
+===================================================================================
+==============================Beginning of Block Comments==========================
+( n >>> )
+( initialize for 1st 
+		2 terms of series. )
+( and print those two terms. )
+( bring loop limit to top of stack. )
+( set up counted loop from one to n. )
+( make a copy of newest term for later use. )
+( bring 2nd newest term to top of stack. )
+( new term is sum of 2 previous terms.  Print it. )
+( return to top of loop. )
+=================================End of Block Comments=============================
+===================================================================================
+==================================Beginning of Token Map===========================
+Token Name				Type			   Occurrences
+
+:					WORD				1
+ Fibonacci numbers.			String				1
+if					WORD				1
+2					NUMBER				2
+dup					WORD				4
+2dup					WORD				1
+fib					WORD				6
+CR					WORD				3
+.					WORD				4
+."					WORD				4
+ Print the first 			String				1
+    					String				1
+<					WORD				1
+ number must be 2 or greater.		String				1
+else					WORD				1
+100					NUMBER				1
+1					NUMBER				4
+rot					WORD				2
+do					WORD				1
++					WORD				1
+loop					WORD				1
+then					WORD				1
+;					WORD				1
+5					NUMBER				1
+10					NUMBER				1
+=================================End of Token Map================================
+
+Table Size: 25

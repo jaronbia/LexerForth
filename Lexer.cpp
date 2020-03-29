@@ -55,7 +55,7 @@ void Lexer::readBlkComment(string& line, int& j) {
     while (currSt == PROCESSBLK && j < int(line.size())) {
         if (line[j] == ')') changeState(STARTLEX); // end of block comment, acquire the state
         blkComments.push_back(line[j++]);
-        if (line[j] != ')' && (j == line.size())) readNewLine(line, j);  // LOOK AT IT LATER
+        if (line[j] != ')' && (j == int(line.size()))) readNewLine(line, j);  // LOOK AT IT LATER
     }
 }
 

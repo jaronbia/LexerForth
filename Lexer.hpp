@@ -29,8 +29,8 @@ public:
     Token(string n = "", TokenT t = DEFAULT) : name(n), type(t) {};
     ~Token() = default;
 
-    const bool equals(const Token& t) const { return name == t.name; }
-    const size_t hashtk() const { return ((hash<string>()(name) ^ hash<TokenT>()(type)) << 1) >> 1; }
+    bool equals(const Token& t) const { return name == t.name; }
+    size_t hashtk() const { return ((hash<string>()(name) ^ hash<TokenT>()(type)) << 1) >> 1; }
     ostream& print(ostream& out) const;
 };
 

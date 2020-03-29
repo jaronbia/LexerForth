@@ -7,7 +7,7 @@
 
 string header();
 
-int main(int argc, char** argv) {
+int main(int , char** argv) {
     ofstream outFile;
     outFile.open(FN, ios_base::app);
     if (outFile.is_open()) {
